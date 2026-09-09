@@ -59,9 +59,9 @@
         }
         .nav-tab {
             flex: 1;
-            padding: 12px 5px;
+            padding: 10px 4px;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: bold;
             color: var(--text-light);
             background: none;
@@ -105,9 +105,9 @@
             margin-bottom: 15px;
         }
         .planning-table th, .planning-table td {
-            padding: 12px 10px;
+            padding: 10px;
             text-align: left;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             border-bottom: 1px solid #F0ECE1;
         }
         .planning-table th {
@@ -120,7 +120,7 @@
         .day-col {
             font-weight: bold;
             color: var(--accent);
-            width: 35%;
+            width: 30%;
         }
 
         /* Form Card */
@@ -172,10 +172,21 @@
         .btn-fav:hover { background: #B7950B; }
         .btn-delete {
             background: var(--accent);
-            padding: 5px 10px;
+            padding: 4px 8px;
             font-size: 0.75rem;
             width: auto;
-            margin-top: 5px;
+            margin-top: 4px;
+        }
+        .btn-small-fav {
+            background: #D4AC0D;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            width: auto;
+            margin-top: 4px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
         /* Recipe Card Mobile */
@@ -221,35 +232,13 @@
         .steps-grid {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-        }
-        .step-box {
-            background: #FAF8F5;
-            border: 1px solid #EEDECA;
-            border-radius: 6px;
-            padding: 8px 10px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-        .step-icon {
-            font-size: 1.2rem;
-            min-width: 25px;
-            text-align: center;
-        }
-        .step-content {
-            flex: 1;
-        }
-        .step-num {
-            font-size: 0.7rem;
-            font-weight: bold;
-            color: var(--accent);
-            text-transform: uppercase;
-            margin-bottom: 2px;
+            gap: 6px;
         }
         .step-desc {
             font-size: 0.85rem;
             color: #444;
+            padding: 4px 0;
+            border-bottom: 1px dashed #eee;
         }
 
         /* Shopping List Mobile */
@@ -274,9 +263,6 @@
             padding: 6px 0;
             border-bottom: 1px solid #F8F5EE;
             font-size: 0.9rem;
-        }
-        .shopping-item:last-child {
-            border-bottom: none;
         }
         .shopping-item input[type="checkbox"] {
             width: 18px;
@@ -309,52 +295,99 @@
     </header>
 
     <div class="nav-tabs">
-        <button class="nav-tab active" onclick="switchTab('planning')">📅 Planning</button>
+        <button class="nav-tab active" onclick="switchTab('today')">⭐ Du Jour</button>
+        <button class="nav-tab" onclick="switchTab('planning')">📅 Planning</button>
         <button class="nav-tab" onclick="switchTab('recipes')">🍳 Recettes</button>
         <button class="nav-tab" onclick="switchTab('manage')">✍️ Ajouter</button>
-        <button class="nav-tab" onclick="switchTab('favs')">⭐ Favoris</button>
+        <button class="nav-tab" onclick="switchTab('favs')">❤️ Favoris</button>
         <button class="nav-tab" onclick="switchTab('shopping')">🛒 Courses</button>
     </div>
 
     <div class="container">
+        <!-- SECTION 0: RECETTE DU JOUR -->
+        <div id="today" class="section active">
+            <h2>🍳 Souper du Jour</h2>
+            <div id="todayContainer">
+                <p style="text-align:center; padding:20px; color:var(--text-light);">Chargement...</p>
+            </div>
+        </div>
+
         <!-- SECTION 1: PLANNING -->
-        <div id="planning" class="section active">
+        <div id="planning" class="section">
             <h2>Planning des Soupers</h2>
             <div id="planningContainer">
                 <table class="planning-table">
-                    <tr><th>Date / Jour</th><th>Souper</th></tr>
-                    <tr><td class="day-col" colspan="2" style="text-align:center;">Chargement du planning...</td></tr>
+                    <tr><th>Date</th><th>Souper</th></tr>
+                    <tr><td colspan="2" style="text-align:center;">Chargement...</td></tr>
                 </table>
             </div>
             <div class="tip-box">
-                💡 Astuce : Si une date a déjà un repas prévu, l'ajouter à nouveau via l'onglet <b>Ajouter</b> remplacera automatiquement l'ancien plat !
+                💡 Astuce : Clique sur l'étoile <b>⭐</b> dans le tableau pour sauvegarder un repas directement dans tes favoris !
             </div>
         </div>
 
         <!-- SECTION 2: RECIPES -->
         <div id="recipes" class="section">
-            <h2>Recettes Étape par Étape</h2>
-            <div id="recipesContainer">
-                <!-- Les recettes s'injectent dynamiquement ou affichent les par défaut -->
-                <div class="recipe-card">
-                    <div class="recipe-header">
-                        <h3>Pâtes aux boulettes sauce tomate</h3>
-                        <span class="time-badge">⏱ 25 min</span>
-                    </div>
-                    <div class="ingredients-box">
-                        <strong>Ingrédients :</strong> 400g haché porc/bœuf, 500g passata, 1 oignon, 400g pâtes, huile d'olive, sel, poivre.
-                    </div>
-                    <div class="steps-grid">
-                        <div class="step-box"><div class="step-icon">🥣</div><div class="step-content"><div class="step-num">Étape 1</div><div class="step-desc">Former les boulettes avec le haché salé et poivré.</div></div></div>
-                        <div class="step-box"><div class="step-icon">🍳</div><div class="step-content"><div class="step-num">Étape 2</div><div class="step-desc">Faire dorer les boulettes avec l'oignon émincé à la poêle.</div></div></div>
-                        <div class="step-box"><div class="step-icon">🥫</div><div class="step-content"><div class="step-num">Étape 3</div><div class="step-desc">Ajouter la passata et laisser mijoter pendant 15 minutes.</div></div></div>
-                        <div class="step-box"><div class="step-icon">🍝</div><div class="step-content"><div class="step-num">Étape 4</div><div class="step-desc">Cuire les pâtes, égoutter et mélanger avec la sauce.</div></div></div>
-                    </div>
-                </div>
+            <h2>7 Recettes Express (< 30 min)</h2>
+            
+            <div class="recipe-card">
+                <div class="recipe-header"><h3>1. Pâtes aux boulettes sauce tomate</h3><span class="time-badge">⏱ 25 min</span></div>
+                <div class="ingredients-box"><strong>Ingrédients :</strong> 400g haché, 500g passata, 1 oignon, 400g pâtes, huile d'olive, sel, poivre.</div>
+                <div class="step-desc">1. Former et dorer les boulettes avec l'oignon émincé à la poêle.</div>
+                <div class="step-desc">2. Ajouter la passata et mijoter 15 minutes.</div>
+                <div class="step-desc">3. Cuire les pâtes et mélanger le tout.</div>
+            </div>
+
+            <div class="recipe-card">
+                <div class="recipe-header"><h3>2. Saucisses, purée et compote</h3><span class="time-badge">⏱ 25 min</span></div>
+                <div class="ingredients-box"><strong>Ingrédients :</strong> 4 saucisses, 800g pommes de terre, 1 bocal compote, beurre, lait.</div>
+                <div class="step-desc">1. Cuire les pommes de terre à l'eau (15 min) et cuire les saucisses à la poêle.</div>
+                <div class="step-desc">2. Écraser les pommes de terre en purée avec beurre et lait.</div>
+                <div class="step-desc">3. Servir chaud avec la compote.</div>
+            </div>
+
+            <div class="recipe-card">
+                <div class="recipe-header"><h3>3. Escalopes panées & haricots</h3><span class="time-badge">⏱ 20 min</span></div>
+                <div class="ingredients-box"><strong>Ingrédients :</strong> 4 escalopes panées, 500g haricots surgelés, 2 gousses d'ail, beurre.</div>
+                <div class="step-desc">1. Cuire les haricots verts à l'eau bouillante (10 min).</div>
+                <div class="step-desc">2. Dorer les escalopes au beurre (5 min par face).</div>
+                <div class="step-desc">3. Faire sauter les haricots avec l'ail haché.</div>
+            </div>
+
+            <div class="recipe-card">
+                <div class="recipe-header"><h3>4. Poêlée paysanne au haché</h3><span class="time-badge">⏱ 20 min</span></div>
+                <div class="ingredients-box"><strong>Ingrédients :</strong> 400g haché bœuf, 600g pdt rissolées, 1 oignon, 200g lardons.</div>
+                <div class="step-desc">1. Dorer les pommes de terre rissolées dans une grande poêle.</div>
+                <div class="step-desc">2. Dans une autre poêle, cuire oignon, lardons et haché.</div>
+                <div class="step-desc">3. Mélanger le tout et servir bien chaud.</div>
+            </div>
+
+            <div class="recipe-card">
+                <div class="recipe-header"><h3>5. Rôti express, champignons & riz</h3><span class="time-badge">⏱ 20 min</span></div>
+                <div class="ingredients-box"><strong>Ingrédients :</strong> 4 tranches rôti cuit, 250g champignons, 20cl crème, 250g riz.</div>
+                <div class="step-desc">1. Lancer la cuisson du riz. Dorer les champignons émincés à la poêle.</div>
+                <div class="step-desc">2. Ajouter la crème, sel, poivre et laisser épaissir 3 min.</div>
+                <div class="step-desc">3. Réchauffer le rôti dans la sauce et servir sur le riz.</div>
+            </div>
+
+            <div class="recipe-card">
+                <div class="recipe-header"><h3>6. Burgers maison classiques</h3><span class="time-badge">⏱ 15 min</span></div>
+                <div class="ingredients-box"><strong>Ingrédients :</strong> 4 pains burger, 4 steaks hachés, cheddar, salade, tomate, sauce.</div>
+                <div class="step-desc">1. Cuire les steaks et fondre le cheddar dessus. Toaster les pains.</div>
+                <div class="step-desc">2. Garnir de sauce, salade, tomate et steak.</div>
+                <div class="step-desc">3. Refermer et déguster.</div>
+            </div>
+
+            <div class="recipe-card">
+                <div class="recipe-header"><h3>7. Wraps de poulet pané</h3><span class="time-badge">⏱ 15 min</span></div>
+                <div class="ingredients-box"><strong>Ingrédients :</strong> 8 tortillas, 4 filets poulet pané, concombre, salade, mayo.</div>
+                <div class="step-desc">1. Cuire le poulet pané et le couper en lamelles.</div>
+                <div class="step-desc">2. Tartiner les tortillas de mayonnaise, ajouter salade et concombre.</div>
+                <div class="step-desc">3. Ajouter le poulet et rouler fermement.</div>
             </div>
         </div>
 
-        <!-- SECTION 3: MANAGE / AJOUTER (Page à part) -->
+        <!-- SECTION 3: MANAGE / AJOUTER -->
         <div id="manage" class="section">
             <h2>Planifier ou Modifier un Souper</h2>
             <div class="form-card">
@@ -371,7 +404,7 @@
                     <textarea id="recipeDetails" rows="4" placeholder="Ingrédients : ...&#10;Étapes : 1. ... 2. ..."></textarea>
                 </div>
                 <button class="btn" onclick="saveMeal()">📅 Ajouter / Remplacer au planning</button>
-                <button class="btn btn-fav" onclick="saveFavorite()">⭐ Sauvegarder dans mes Favoris</button>
+                <button class="btn btn-fav" onclick="saveFavoriteCustom()">⭐ Sauvegarder dans mes Favoris</button>
             </div>
         </div>
 
@@ -379,39 +412,40 @@
         <div id="favs" class="section">
             <h2>Mes Recettes Favorites</h2>
             <div id="favListContainer">
-                <p style="color:var(--text-light); text-align:center; padding: 20px;">Aucun favori pour l'instant.</p>
+                <p style="color:var(--text-light); text-align:center; padding: 20px;">Aucun favori enregistré.</p>
             </div>
         </div>
 
         <!-- SECTION 5: SHOPPING LIST -->
         <div id="shopping" class="section">
-            <h2>Liste de Courses Interactive</h2>
-            <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:12px;">Cochez les articles au fur et à mesure dans les rayons :</p>
+            <h2>🛒 Liste de Courses Consolidée</h2>
+            <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:12px;">Triée par catégories pour les 7 soupers :</p>
 
             <div class="category-box">
                 <h3>🍅 Fruits / Légumes</h3>
-                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Oignons & Ail</span></div>
-                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Pommes de terre (800g)</span></div>
-                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Champignons frais (250g)</span></div>
-                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Salade, Tomate, Concombre</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Oignons (x2) & Ail (1 tête)</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Pommes de terre farineuses (800g)</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Champignons de Paris frais (250g)</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Salade, Tomate & Concombre</span></div>
             </div>
 
             <div class="category-box">
                 <h3>🥩 Frais (Viande & Crémerie)</h3>
-                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Haché de bœuf / porc (800g)</span></div>
-                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Saucisses & Escalopes panées</span></div>
-                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Lardons & Tranches de rôti</span></div>
-                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Steaks hachés & Poulet pané</span></div>
-                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Cheddar, Beurre, Lait & Crème</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Haché porc/bœuf (400g) & Haché bœuf (400g)</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Saucisses de campagne (x4)</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Escalopes panées (x4) & Filets poulet pané (x4)</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Lardons (200g) & Tranches rôti de porc (x4)</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Steaks hachés (x4) & Cheddar en tranches</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Beurre, Lait & Crème liquide (20cl)</span></div>
             </div>
 
             <div class="category-box">
                 <h3>🥫 Épicerie</h3>
                 <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Passata de tomates (500g)</span></div>
-                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Pâtes & Riz</span></div>
-                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Compote de pommes</span></div>
-                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Pains burger & Tortillas (Wraps)</span></div>
-                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Sauces & Mayonnaise</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Pâtes (400g) & Riz (250g)</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Compote de pommes (1 bocal)</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Pains burger (1 pqt) & Tortillas / Wraps (1 pqt)</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Sauce burger & Mayonnaise</span></div>
             </div>
 
             <div class="category-box">
@@ -424,8 +458,31 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // Date du jour par défaut
             document.getElementById('mealDate').valueAsDate = new Date();
+            
+            // Si le planning est vide, pré-remplit les 7 prochains jours à partir d'aujourd'hui avec les 7 recettes par défaut
+            let meals = JSON.parse(localStorage.getItem('shared_meals') || '{}');
+            if(Object.keys(meals).length === 0) {
+                const defaultRecipes = [
+                    { title: "Pâtes aux boulettes sauce tomate", details: "Ingrédients : 400g haché, 500g passata, 1 oignon, 400g pâtes.\n1. Dorer les boulettes et l'oignon.\n2. Ajouter la passata (15 min).\n3. Cuire les pâtes et mélanger." },
+                    { title: "Saucisses, purée et compote", details: "Ingrédients : 4 saucisses, 800g pdt, compote, beurre, lait.\n1. Cuire les pdt à l'eau et les saucisses à la poêle.\n2. Écraser en purée.\n3. Servir avec la compote." },
+                    { title: "Escalopes panées & haricots", details: "Ingrédients : 4 escalopes, 500g haricots, ail, beurre.\n1. Cuire les haricots à l'eau (10 min).\n2. Dorer les escalopes au beurre.\n3. Sauter les haricots à l'ail." },
+                    { title: "Poêlée paysanne au haché", details: "Ingrédients : 400g haché, 600g pdt rissolées, oignon, lardons.\n1. Dorer les pdt rissolées.\n2. Cuire oignon, lardons et haché.\n3. Mélanger le tout." },
+                    { title: "Rôti express, champignons & riz", details: "Ingrédients : 4 tranches rôti, 250g champignons, crème, riz.\n1. Cuire le riz et dorer les champignons.\n2. Ajouter la crème (3 min).\n3. Réchauffer le rôti dans la sauce." },
+                    { title: "Burgers maison classiques", details: "Ingrédients : 4 pains, 4 steaks, cheddar, salade, tomate.\n1. Cuire les steaks avec le cheddar.\n2. Toaster les pains.\n3. Garnir et servir." },
+                    { title: "Wraps de poulet pané", details: "Ingrédients : 8 tortillas, 4 poulets panés, concombre, mayo.\n1. Cuire le poulet pané.\n2. Garnir les tortillas de mayo, salade et concombre.\n3. Rouler fermement." }
+                ];
+                
+                let today = new Date();
+                defaultRecipes.forEach((rec, idx) => {
+                    let d = new Date(today);
+                    d.setDate(today.getDate() + idx);
+                    let dateStr = d.toISOString().split('T')[0];
+                    meals[dateStr] = rec;
+                });
+                localStorage.setItem('shared_meals', JSON.stringify(meals));
+            }
+
             loadAppData();
         });
 
@@ -447,7 +504,6 @@
             }
         }
 
-        // --- GESTION DU STORAGE & PLANNING (Partagé entre appareils via localStorage) ---
         function saveMeal() {
             const date = document.getElementById('mealDate').value;
             const title = document.getElementById('recipeTitle').value;
@@ -459,22 +515,16 @@
             }
 
             let meals = JSON.parse(localStorage.getItem('shared_meals') || '{}');
-            meals[date] = { title, details }; // Remplace automatiquement si la date existe déjà
+            meals[date] = { title, details };
             localStorage.setItem('shared_meals', JSON.stringify(meals));
-
-            // Ajoute aussi aux recettes globales pour l'onglet Recettes
-            let recipes = JSON.parse(localStorage.getItem('shared_recipes') || '[]');
-            recipes.unshift({ title, details, time: "20 min" });
-            localStorage.setItem('shared_recipes', JSON.stringify(recipes));
 
             alert("Repas planifié avec succès !");
             document.getElementById('recipeTitle').value = '';
             document.getElementById('recipeDetails').value = '';
             loadAppData();
             switchTab('planning');
-            // Réactive l'onglet planning visuellement
-            document.querySelectorAll('.nav-tab')[0].classList.add('active');
-            document.querySelectorAll('.nav-tab')[2].classList.remove('active');
+            document.querySelectorAll('.nav-tab')[1].classList.add('active');
+            document.querySelectorAll('.nav-tab')[3].classList.remove('active');
         }
 
         function deleteMeal(date) {
@@ -484,12 +534,32 @@
             loadAppData();
         }
 
-        function saveFavorite() {
+        // Ajouter aux favoris directement depuis le planning via l'étoile ⭐
+        function addFavFromPlanning(date) {
+            let meals = JSON.parse(localStorage.getItem('shared_meals') || '{}');
+            if(!meals[date]) return;
+            
+            let title = meals[date].title;
+            let details = meals[date].details;
+
+            let favs = JSON.parse(localStorage.getItem('shared_favs') || '[]');
+            // Évite les doublons exacts
+            if(!favs.some(f => f.title === title)) {
+                favs.push({ title, details });
+                localStorage.setItem('shared_favs', JSON.stringify(favs));
+                alert(`"${title}" a été ajouté à vos favoris ⭐ !`);
+                loadAppData();
+            } else {
+                alert("Cette recette est déjà dans vos favoris !");
+            }
+        }
+
+        function saveFavoriteCustom() {
             const title = document.getElementById('recipeTitle').value;
             const details = document.getElementById('recipeDetails').value;
 
             if(!title || !details) {
-                alert("Indiquez un titre et des détails de recette pour les favoris.");
+                alert("Indiquez un titre et des détails de recette.");
                 return;
             }
 
@@ -512,18 +582,34 @@
             document.getElementById('recipeTitle').value = favs[index].title;
             document.getElementById('recipeDetails').value = favs[index].details;
             switchTab('manage');
-            document.querySelectorAll('.nav-tab')[2].classList.add('active');
-            document.querySelectorAll('.nav-tab')[3].classList.remove('active');
+            document.querySelectorAll('.nav-tab')[3].classList.add('active');
+            document.querySelectorAll('.nav-tab')[4].classList.remove('active');
         }
 
         function loadAppData() {
-            // 1. Charger le Planning
-            const planningContainer = document.getElementById('planningContainer');
             let meals = JSON.parse(localStorage.getItem('shared_meals') || '{}');
             let keys = Object.keys(meals).sort();
+            let todayStr = new Date().toISOString().split('T')[0];
 
+            // 0. Charger la Recette du Jour
+            const todayContainer = document.getElementById('todayContainer');
+            if(meals[todayStr]) {
+                todayContainer.innerHTML = `
+                    <div class="recipe-card">
+                        <div class="recipe-header">
+                            <h3>⭐ ${meals[todayStr].title}</h3>
+                            <span class="time-badge">📅 ${todayStr}</span>
+                        </div>
+                        <div class="ingredients-box" style="white-space: pre-line;">${meals[todayStr].details}</div>
+                    </div>`;
+            } else {
+                todayContainer.innerHTML = `<p style="text-align:center; padding:20px; color:var(--text-light);">Aucun souper prévu précisément pour aujourd'hui (${todayStr}). Va dans l'onglet <b>Ajouter</b> ou consulte le planning !</p>`;
+            }
+
+            // 1. Charger le Planning avec l'étoile ⭐
+            const planningContainer = document.getElementById('planningContainer');
             if(keys.length === 0) {
-                planningContainer.innerHTML = `<table class="planning-table"><tr><th>Date</th><th>Souper</th></tr><tr><td colspan="2" style="text-align:center; padding:15px; color:var(--text-light);">Aucun souper planifié pour le moment. Allez dans "Ajouter".</td></tr></table>`;
+                planningContainer.innerHTML = `<table class="planning-table"><tr><th>Date</th><th>Souper</th></tr><tr><td colspan="2" style="text-align:center; padding:15px; color:var(--text-light);">Aucun souper planifié.</td></tr></table>`;
             } else {
                 let html = `<table class="planning-table"><tr><th>Date</th><th>Souper & Actions</th></tr>`;
                 keys.forEach(date => {
@@ -531,7 +617,8 @@
                         <td class="day-col">📅 ${date}</td>
                         <td>
                             <strong>${meals[date].title}</strong><br>
-                            <span style="font-size:0.8rem; color:var(--text-light);">${meals[date].details.substring(0, 60)}...</span><br>
+                            <span style="font-size:0.8rem; color:var(--text-light);">${meals[date].details.substring(0, 50)}...</span><br>
+                            <button class="btn-small-fav" onclick="addFavFromPlanning('${date}')">⭐ Favori</button>
                             <button class="btn btn-delete" onclick="deleteMeal('${date}')">Supprimer</button>
                         </td>
                     </tr>`;
@@ -544,13 +631,13 @@
             const favListContainer = document.getElementById('favListContainer');
             let favs = JSON.parse(localStorage.getItem('shared_favs') || '[]');
             if(favs.length === 0) {
-                favListContainer.innerHTML = `<p style="color:var(--text-light); text-align:center; padding: 20px;">Aucun favori enregistré pour l'instant.</p>`;
+                favListContainer.innerHTML = `<p style="color:var(--text-light); text-align:center; padding: 20px;">Aucun favori enregistré pour l'instant. Clique sur l'étoile du planning pour en ajouter !</p>`;
             } else {
                 let favHtml = '';
                 favs.forEach((f, idx) => {
                     favHtml += `<div class="recipe-card">
                         <div class="recipe-header">
-                            <h3>⭐ ${f.title}</h3>
+                            <h3>❤️ ${f.title}</h3>
                         </div>
                         <div class="ingredients-box" style="white-space: pre-line;">${f.details}</div>
                         <button class="btn" style="padding:6px; font-size:0.8rem;" onclick="useFavorite(${idx})">Planifier ce favori</button>
