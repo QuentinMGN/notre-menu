@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notre Menu de la Semaine</title>
+    <title>Notre Menu & Recettes</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f4f4f9; color: #333; }
-        h1 { text-align: center; color: #2c3e50; }
-        .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        body { font-family: Arial, sans-serif; max-width: 650px; margin: 0 auto; padding: 20px; background: #f4f4f9; color: #333; }
+        h1, h2 { text-align: center; color: #2c3e50; }
+        .card { background: white; padding: 15px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         label { display: block; margin-bottom: 5px; font-weight: bold; }
         input, textarea { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background: #27ae60; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px; }
+        button { background: #27ae60; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px; margin-bottom: 5px;}
         button:hover { background: #219653; }
-        .recipe-item { border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
+        .recipe-item, .fav-item { border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
+        .btn-delete { background: #e74c3c; width: auto; padding: 5px 10px; font-size: 12px; }
+        .btn-delete:hover { background: #c0392b; }
+        .btn-fav { background: #f39c12; width: auto; padding: 5px 10px; font-size: 12px; }
+        .btn-fav:hover { background: #d68910; }
     </style>
 </head>
 <body>
@@ -20,57 +24,125 @@
     <h1>🍽️ Notre Menu de la Semaine</h1>
 
     <div class="card">
-        <h3>Ajouter ou modifier un repas</h3>
-        <label for="day">Jour :</label>
-        <input type="text" id="day" placeholder="Ex: Lundi - Pâtes carbo">
-        <label for="recipe">Détails de la recette :</label>
-        <textarea id="recipe" rows="3" placeholder="Ingrédients et étapes rapides..."></textarea>
-        <button onclick="saveMeal()">Ajouter au planning</button>
+        <h3>Planifier un souper</h3>
+        <label for="mealDate">Date :</label>
+        <input type="date" id="mealDate">
+        
+        <label for="recipeTitle">Nom du plat :</label>
+        <input type="text" id="recipeTitle" placeholder="Ex: Pâtes carbonara express">
+
+        <label for="recipeDetails">Recette (Ingrédients & Étapes - max 30 min) :</label>
+        <textarea id="recipeDetails" rows="3" placeholder="1. Cuire les pâtes... 2. Mélanger..."></textarea>
+        
+        <button onclick="saveMeal()">Ajouter / Remplacer au planning</button>
+        <button class="btn-fav" onclick="saveFavorite()">⭐ Ajouter aux recettes favorites</button>
     </div>
 
     <div class="card">
-        <h3>Planning de la semaine</h3>
-        <div id="menuList">Aucun repas enregistré pour l'instant.</div>
+        <h3>📅 Planning des soupers</h3>
+        <div id="menuList">Aucun repas planifié.</div>
+    </div>
+
+    <div class="card">
+        <h3>⭐ Mes Recettes Favorites</h3>
+        <div id="favList">Aucun favori enregistré.</div>
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", loadMeals);
+        document.addEventListener("DOMContentLoaded", () => {
+            loadMeals();
+            loadFavorites();
+            // Met la date du jour par défaut dans le date picker
+            document.getElementById('mealDate').valueAsDate = new Date();
+        });
 
         function saveMeal() {
-            const day = document.getElementById('day').value;
-            const recipe = document.getElementById('recipe').value;
-            if(!day || !recipe) return alert("Remplis tous les champs !");
+            const date = document.getElementById('mealDate').value;
+            const title = document.getElementById('recipeTitle').value;
+            const details = document.getElementById('recipeDetails').value;
+            
+            if(!date || !title || !details) return alert("Remplis tous les champs pour planifier !");
 
-            let meals = JSON.parse(localStorage.getItem('shared_meals') || '[]');
-            meals.push({ day, recipe });
+            let meals = JSON.parse(localStorage.getItem('shared_meals') || '{}');
+            
+            // Si un repas existe déjà à cette date, il est automatiquement remplacé
+            meals[date] = { title, details };
+            
             localStorage.setItem('shared_meals', JSON.stringify(meals));
-
-            document.getElementById('day').value = '';
-            document.getElementById('recipe').value = '';
             loadMeals();
+            alert("Planning mis à jour !");
         }
 
         function loadMeals() {
             const menuList = document.getElementById('menuList');
-            let meals = JSON.parse(localStorage.getItem('shared_meals') || '[]');
-            if(meals.length === 0) {
-                menuList.innerHTML = "Aucun repas enregistré pour l'instant.";
+            let meals = JSON.parse(localStorage.getItem('shared_meals') || '{}');
+            let keys = Object.keys(meals).sort();
+
+            if(keys.length === 0) {
+                menuList.innerHTML = "Aucun repas planifié.";
                 return;
             }
-            menuList.innerHTML = meals.map((m, index) => `
+
+            menuList.innerHTML = keys.map(date => `
                 <div class="recipe-item">
-                    <strong>${m.day}</strong>
-                    <p>${m.recipe.replace(/\n/g, '<br>')}</p>
-                    <button onclick="deleteMeal(${index})" style="background:#e74c3c; padding:5px; font-size:12px; width:auto;">Supprimer</button>
+                    <strong>📅 ${date} : ${meals[date].title}</strong>
+                    <p>${meals[date].details.replace(/\n/g, '<br>')}</p>
+                    <button class="btn-delete" onclick="deleteMeal('${date}')">Supprimer</button>
                 </div>
             `).join('');
         }
 
-        function deleteMeal(index) {
-            let meals = JSON.parse(localStorage.getItem('shared_meals') || '[]');
-            meals.splice(index, 1);
+        function deleteMeal(date) {
+            let meals = JSON.parse(localStorage.getItem('shared_meals') || '{}');
+            delete meals[date];
             localStorage.setItem('shared_meals', JSON.stringify(meals));
             loadMeals();
+        }
+
+        function saveFavorite() {
+            const title = document.getElementById('recipeTitle').value;
+            const details = document.getElementById('recipeDetails').value;
+
+            if(!title || !details) return alert("Indique au moins un titre et des détails de recette à sauvegarder en favori !");
+
+            let favs = JSON.parse(localStorage.getItem('shared_favs') || '[]');
+            favs.push({ title, details });
+            localStorage.setItem('shared_favs', JSON.stringify(favs));
+            loadFavorites();
+            alert("Recette ajoutée aux favoris ⭐ !");
+        }
+
+        function loadFavorites() {
+            const favList = document.getElementById('favList');
+            let favs = JSON.parse(localStorage.getItem('shared_favs') || '[]');
+
+            if(favs.length === 0) {
+                favList.innerHTML = "Aucun favori enregistré.";
+                return;
+            }
+
+            favList.innerHTML = favs.map((f, index) => `
+                <div class="fav-item">
+                    <strong>⭐ ${f.title}</strong>
+                    <p>${f.details.replace(/\n/g, '<br>')}</p>
+                    <button onclick="useFavorite(${index})">Planifier ce favori</button>
+                    <button class="btn-delete" onclick="deleteFavorite(${index})">Supprimer des favoris</button>
+                </div>
+            `).join('');
+        }
+
+        function useFavorite(index) {
+            let favs = JSON.parse(localStorage.getItem('shared_favs') || '[]');
+            document.getElementById('recipeTitle').value = favs[index].title;
+            document.getElementById('recipeDetails').value = favs[index].details;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteFavorite(index) {
+            let favs = JSON.parse(localStorage.getItem('shared_favs') || '[]');
+            favs.splice(index, 1);
+            localStorage.setItem('shared_favs', JSON.stringify(favs));
+            loadFavorites();
         }
     </script>
 </body>
