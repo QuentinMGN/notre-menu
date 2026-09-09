@@ -3,146 +3,562 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notre Menu & Recettes</title>
+    <title>Mon Menu de la Semaine</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 650px; margin: 0 auto; padding: 20px; background: #f4f4f9; color: #333; }
-        h1, h2 { text-align: center; color: #2c3e50; }
-        .card { background: white; padding: 15px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, textarea { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background: #27ae60; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px; margin-bottom: 5px;}
-        button:hover { background: #219653; }
-        .recipe-item, .fav-item { border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
-        .btn-delete { background: #e74c3c; width: auto; padding: 5px 10px; font-size: 12px; }
-        .btn-delete:hover { background: #c0392b; }
-        .btn-fav { background: #f39c12; width: auto; padding: 5px 10px; font-size: 12px; }
-        .btn-fav:hover { background: #d68910; }
+        :root {
+            --primary: #7A1C1C;
+            --primary-dark: #5C1313;
+            --accent: #C0392B;
+            --bg: #FDFBF7;
+            --card-bg: #FFFFFF;
+            --text: #2C3E50;
+            --text-light: #7F8C8D;
+            --border: #E6DCCD;
+            --badge-bg: #FADBD8;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding-bottom: 70px;
+        }
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            border-bottom: 4px solid var(--accent);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        header p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            font-style: italic;
+        }
+        .nav-tabs {
+            display: flex;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 75px;
+            z-index: 99;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            overflow-x: auto;
+        }
+        .nav-tab {
+            flex: 1;
+            padding: 12px 5px;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--text-light);
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+        .nav-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--accent);
+            background-color: #FAF8F5;
+        }
+        .container {
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        h2 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 5px;
+        }
+        
+        /* Table Planning */
+        .planning-table {
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        .planning-table th, .planning-table td {
+            padding: 12px 10px;
+            text-align: left;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #F0ECE1;
+        }
+        .planning-table th {
+            background-color: var(--text);
+            color: white;
+        }
+        .planning-table tr:nth-child(even) {
+            background-color: #F8F5EE;
+        }
+        .day-col {
+            font-weight: bold;
+            color: var(--accent);
+            width: 35%;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+        input[type="date"], input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: #FAF8F5;
+            box-sizing: border-box;
+        }
+        textarea { resize: vertical; }
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .btn:hover { background: var(--primary-dark); }
+        .btn-fav {
+            background: #D4AC0D;
+            margin-top: 8px;
+        }
+        .btn-fav:hover { background: #B7950B; }
+        .btn-delete {
+            background: var(--accent);
+            padding: 5px 10px;
+            font-size: 0.75rem;
+            width: auto;
+            margin-top: 5px;
+        }
+
+        /* Recipe Card Mobile */
+        .recipe-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .recipe-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .recipe-card h3 {
+            font-size: 1rem;
+            color: var(--text);
+        }
+        .time-badge {
+            background: var(--badge-bg);
+            color: var(--primary);
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 3px 6px;
+            border-radius: 10px;
+            text-transform: uppercase;
+        }
+        .ingredients-box {
+            background: #F8F5EE;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            border: 1px solid #EEDECA;
+        }
+        .ingredients-box strong {
+            color: var(--primary);
+        }
+        .steps-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .step-box {
+            background: #FAF8F5;
+            border: 1px solid #EEDECA;
+            border-radius: 6px;
+            padding: 8px 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .step-icon {
+            font-size: 1.2rem;
+            min-width: 25px;
+            text-align: center;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-num {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+        .step-desc {
+            font-size: 0.85rem;
+            color: #444;
+        }
+
+        /* Shopping List Mobile */
+        .category-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .category-box h3 {
+            font-size: 0.95rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 4px;
+        }
+        .shopping-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 0;
+            border-bottom: 1px solid #F8F5EE;
+            font-size: 0.9rem;
+        }
+        .shopping-item:last-child {
+            border-bottom: none;
+        }
+        .shopping-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+        .shopping-item.checked span {
+            text-decoration: line-through;
+            color: var(--text-light);
+        }
+        
+        .tip-box {
+            background: #FCF3CF;
+            border: 1px solid #F9E79F;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #7D6608;
+            margin-top: 15px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
-    <h1>🍽️ Notre Menu de la Semaine</h1>
+    <header>
+        <h1>👨‍🍳 Mon Menu de la Semaine</h1>
+        <p>Simple, rapide, sans charge mentale et partagé</p>
+    </header>
 
-    <div class="card">
-        <h3>Planifier un souper</h3>
-        <label for="mealDate">Date :</label>
-        <input type="date" id="mealDate">
-        
-        <label for="recipeTitle">Nom du plat :</label>
-        <input type="text" id="recipeTitle" placeholder="Ex: Pâtes carbonara express">
-
-        <label for="recipeDetails">Recette (Ingrédients & Étapes - max 30 min) :</label>
-        <textarea id="recipeDetails" rows="3" placeholder="1. Cuire les pâtes... 2. Mélanger..."></textarea>
-        
-        <button onclick="saveMeal()">Ajouter / Remplacer au planning</button>
-        <button class="btn-fav" onclick="saveFavorite()">⭐ Ajouter aux recettes favorites</button>
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="switchTab('planning')">📅 Planning</button>
+        <button class="nav-tab" onclick="switchTab('recipes')">🍳 Recettes</button>
+        <button class="nav-tab" onclick="switchTab('manage')">✍️ Ajouter</button>
+        <button class="nav-tab" onclick="switchTab('favs')">⭐ Favoris</button>
+        <button class="nav-tab" onclick="switchTab('shopping')">🛒 Courses</button>
     </div>
 
-    <div class="card">
-        <h3>📅 Planning des soupers</h3>
-        <div id="menuList">Aucun repas planifié.</div>
-    </div>
+    <div class="container">
+        <!-- SECTION 1: PLANNING -->
+        <div id="planning" class="section active">
+            <h2>Planning des Soupers</h2>
+            <div id="planningContainer">
+                <table class="planning-table">
+                    <tr><th>Date / Jour</th><th>Souper</th></tr>
+                    <tr><td class="day-col" colspan="2" style="text-align:center;">Chargement du planning...</td></tr>
+                </table>
+            </div>
+            <div class="tip-box">
+                💡 Astuce : Si une date a déjà un repas prévu, l'ajouter à nouveau via l'onglet <b>Ajouter</b> remplacera automatiquement l'ancien plat !
+            </div>
+        </div>
 
-    <div class="card">
-        <h3>⭐ Mes Recettes Favorites</h3>
-        <div id="favList">Aucun favori enregistré.</div>
+        <!-- SECTION 2: RECIPES -->
+        <div id="recipes" class="section">
+            <h2>Recettes Étape par Étape</h2>
+            <div id="recipesContainer">
+                <!-- Les recettes s'injectent dynamiquement ou affichent les par défaut -->
+                <div class="recipe-card">
+                    <div class="recipe-header">
+                        <h3>Pâtes aux boulettes sauce tomate</h3>
+                        <span class="time-badge">⏱ 25 min</span>
+                    </div>
+                    <div class="ingredients-box">
+                        <strong>Ingrédients :</strong> 400g haché porc/bœuf, 500g passata, 1 oignon, 400g pâtes, huile d'olive, sel, poivre.
+                    </div>
+                    <div class="steps-grid">
+                        <div class="step-box"><div class="step-icon">🥣</div><div class="step-content"><div class="step-num">Étape 1</div><div class="step-desc">Former les boulettes avec le haché salé et poivré.</div></div></div>
+                        <div class="step-box"><div class="step-icon">🍳</div><div class="step-content"><div class="step-num">Étape 2</div><div class="step-desc">Faire dorer les boulettes avec l'oignon émincé à la poêle.</div></div></div>
+                        <div class="step-box"><div class="step-icon">🥫</div><div class="step-content"><div class="step-num">Étape 3</div><div class="step-desc">Ajouter la passata et laisser mijoter pendant 15 minutes.</div></div></div>
+                        <div class="step-box"><div class="step-icon">🍝</div><div class="step-content"><div class="step-num">Étape 4</div><div class="step-desc">Cuire les pâtes, égoutter et mélanger avec la sauce.</div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: MANAGE / AJOUTER (Page à part) -->
+        <div id="manage" class="section">
+            <h2>Planifier ou Modifier un Souper</h2>
+            <div class="form-card">
+                <div class="form-group">
+                    <label for="mealDate">Date du repas :</label>
+                    <input type="date" id="mealDate">
+                </div>
+                <div class="form-group">
+                    <label for="recipeTitle">Nom du plat :</label>
+                    <input type="text" id="recipeTitle" placeholder="Ex: Wraps de poulet croustillant">
+                </div>
+                <div class="form-group">
+                    <label for="recipeDetails">Recette & Ingrédients (Rapide < 30 min) :</label>
+                    <textarea id="recipeDetails" rows="4" placeholder="Ingrédients : ...&#10;Étapes : 1. ... 2. ..."></textarea>
+                </div>
+                <button class="btn" onclick="saveMeal()">📅 Ajouter / Remplacer au planning</button>
+                <button class="btn btn-fav" onclick="saveFavorite()">⭐ Sauvegarder dans mes Favoris</button>
+            </div>
+        </div>
+
+        <!-- SECTION 4: FAVORIS -->
+        <div id="favs" class="section">
+            <h2>Mes Recettes Favorites</h2>
+            <div id="favListContainer">
+                <p style="color:var(--text-light); text-align:center; padding: 20px;">Aucun favori pour l'instant.</p>
+            </div>
+        </div>
+
+        <!-- SECTION 5: SHOPPING LIST -->
+        <div id="shopping" class="section">
+            <h2>Liste de Courses Interactive</h2>
+            <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:12px;">Cochez les articles au fur et à mesure dans les rayons :</p>
+
+            <div class="category-box">
+                <h3>🍅 Fruits / Légumes</h3>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Oignons & Ail</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Pommes de terre (800g)</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Champignons frais (250g)</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Salade, Tomate, Concombre</span></div>
+            </div>
+
+            <div class="category-box">
+                <h3>🥩 Frais (Viande & Crémerie)</h3>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Haché de bœuf / porc (800g)</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Saucisses & Escalopes panées</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Lardons & Tranches de rôti</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Steaks hachés & Poulet pané</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Cheddar, Beurre, Lait & Crème</span></div>
+            </div>
+
+            <div class="category-box">
+                <h3>🥫 Épicerie</h3>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Passata de tomates (500g)</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Pâtes & Riz</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Compote de pommes</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Pains burger & Tortillas (Wraps)</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Sauces & Mayonnaise</span></div>
+            </div>
+
+            <div class="category-box">
+                <h3>❄️ Surgelés</h3>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Haricots verts (500g)</span></div>
+                <div class="shopping-item"><input type="checkbox" onchange="toggleCheck(this)"><span>Pommes de terre rissolées (600g)</span></div>
+            </div>
+        </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            loadMeals();
-            loadFavorites();
-            // Met la date du jour par défaut dans le date picker
+            // Date du jour par défaut
             document.getElementById('mealDate').valueAsDate = new Date();
+            loadAppData();
         });
 
+        function switchTab(tabId) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function toggleCheck(checkbox) {
+            const item = checkbox.closest('.shopping-item');
+            if (checkbox.checked) {
+                item.classList.add('checked');
+            } else {
+                item.classList.remove('checked');
+            }
+        }
+
+        // --- GESTION DU STORAGE & PLANNING (Partagé entre appareils via localStorage) ---
         function saveMeal() {
             const date = document.getElementById('mealDate').value;
             const title = document.getElementById('recipeTitle').value;
             const details = document.getElementById('recipeDetails').value;
-            
-            if(!date || !title || !details) return alert("Remplis tous les champs pour planifier !");
 
-            let meals = JSON.parse(localStorage.getItem('shared_meals') || '{}');
-            
-            // Si un repas existe déjà à cette date, il est automatiquement remplacé
-            meals[date] = { title, details };
-            
-            localStorage.setItem('shared_meals', JSON.stringify(meals));
-            loadMeals();
-            alert("Planning mis à jour !");
-        }
-
-        function loadMeals() {
-            const menuList = document.getElementById('menuList');
-            let meals = JSON.parse(localStorage.getItem('shared_meals') || '{}');
-            let keys = Object.keys(meals).sort();
-
-            if(keys.length === 0) {
-                menuList.innerHTML = "Aucun repas planifié.";
+            if(!date || !title || !details) {
+                alert("Veuillez remplir tous les champs !");
                 return;
             }
 
-            menuList.innerHTML = keys.map(date => `
-                <div class="recipe-item">
-                    <strong>📅 ${date} : ${meals[date].title}</strong>
-                    <p>${meals[date].details.replace(/\n/g, '<br>')}</p>
-                    <button class="btn-delete" onclick="deleteMeal('${date}')">Supprimer</button>
-                </div>
-            `).join('');
+            let meals = JSON.parse(localStorage.getItem('shared_meals') || '{}');
+            meals[date] = { title, details }; // Remplace automatiquement si la date existe déjà
+            localStorage.setItem('shared_meals', JSON.stringify(meals));
+
+            // Ajoute aussi aux recettes globales pour l'onglet Recettes
+            let recipes = JSON.parse(localStorage.getItem('shared_recipes') || '[]');
+            recipes.unshift({ title, details, time: "20 min" });
+            localStorage.setItem('shared_recipes', JSON.stringify(recipes));
+
+            alert("Repas planifié avec succès !");
+            document.getElementById('recipeTitle').value = '';
+            document.getElementById('recipeDetails').value = '';
+            loadAppData();
+            switchTab('planning');
+            // Réactive l'onglet planning visuellement
+            document.querySelectorAll('.nav-tab')[0].classList.add('active');
+            document.querySelectorAll('.nav-tab')[2].classList.remove('active');
         }
 
         function deleteMeal(date) {
             let meals = JSON.parse(localStorage.getItem('shared_meals') || '{}');
             delete meals[date];
             localStorage.setItem('shared_meals', JSON.stringify(meals));
-            loadMeals();
+            loadAppData();
         }
 
         function saveFavorite() {
             const title = document.getElementById('recipeTitle').value;
             const details = document.getElementById('recipeDetails').value;
 
-            if(!title || !details) return alert("Indique au moins un titre et des détails de recette à sauvegarder en favori !");
+            if(!title || !details) {
+                alert("Indiquez un titre et des détails de recette pour les favoris.");
+                return;
+            }
 
             let favs = JSON.parse(localStorage.getItem('shared_favs') || '[]');
             favs.push({ title, details });
             localStorage.setItem('shared_favs', JSON.stringify(favs));
-            loadFavorites();
             alert("Recette ajoutée aux favoris ⭐ !");
-        }
-
-        function loadFavorites() {
-            const favList = document.getElementById('favList');
-            let favs = JSON.parse(localStorage.getItem('shared_favs') || '[]');
-
-            if(favs.length === 0) {
-                favList.innerHTML = "Aucun favori enregistré.";
-                return;
-            }
-
-            favList.innerHTML = favs.map((f, index) => `
-                <div class="fav-item">
-                    <strong>⭐ ${f.title}</strong>
-                    <p>${f.details.replace(/\n/g, '<br>')}</p>
-                    <button onclick="useFavorite(${index})">Planifier ce favori</button>
-                    <button class="btn-delete" onclick="deleteFavorite(${index})">Supprimer des favoris</button>
-                </div>
-            `).join('');
-        }
-
-        function useFavorite(index) {
-            let favs = JSON.parse(localStorage.getItem('shared_favs') || '[]');
-            document.getElementById('recipeTitle').value = favs[index].title;
-            document.getElementById('recipeDetails').value = favs[index].details;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            loadAppData();
         }
 
         function deleteFavorite(index) {
             let favs = JSON.parse(localStorage.getItem('shared_favs') || '[]');
             favs.splice(index, 1);
             localStorage.setItem('shared_favs', JSON.stringify(favs));
-            loadFavorites();
+            loadAppData();
+        }
+
+        function useFavorite(index) {
+            let favs = JSON.parse(localStorage.getItem('shared_favs') || '[]');
+            document.getElementById('recipeTitle').value = favs[index].title;
+            document.getElementById('recipeDetails').value = favs[index].details;
+            switchTab('manage');
+            document.querySelectorAll('.nav-tab')[2].classList.add('active');
+            document.querySelectorAll('.nav-tab')[3].classList.remove('active');
+        }
+
+        function loadAppData() {
+            // 1. Charger le Planning
+            const planningContainer = document.getElementById('planningContainer');
+            let meals = JSON.parse(localStorage.getItem('shared_meals') || '{}');
+            let keys = Object.keys(meals).sort();
+
+            if(keys.length === 0) {
+                planningContainer.innerHTML = `<table class="planning-table"><tr><th>Date</th><th>Souper</th></tr><tr><td colspan="2" style="text-align:center; padding:15px; color:var(--text-light);">Aucun souper planifié pour le moment. Allez dans "Ajouter".</td></tr></table>`;
+            } else {
+                let html = `<table class="planning-table"><tr><th>Date</th><th>Souper & Actions</th></tr>`;
+                keys.forEach(date => {
+                    html += `<tr>
+                        <td class="day-col">📅 ${date}</td>
+                        <td>
+                            <strong>${meals[date].title}</strong><br>
+                            <span style="font-size:0.8rem; color:var(--text-light);">${meals[date].details.substring(0, 60)}...</span><br>
+                            <button class="btn btn-delete" onclick="deleteMeal('${date}')">Supprimer</button>
+                        </td>
+                    </tr>`;
+                });
+                html += `</table>`;
+                planningContainer.innerHTML = html;
+            }
+
+            // 2. Charger les Favoris
+            const favListContainer = document.getElementById('favListContainer');
+            let favs = JSON.parse(localStorage.getItem('shared_favs') || '[]');
+            if(favs.length === 0) {
+                favListContainer.innerHTML = `<p style="color:var(--text-light); text-align:center; padding: 20px;">Aucun favori enregistré pour l'instant.</p>`;
+            } else {
+                let favHtml = '';
+                favs.forEach((f, idx) => {
+                    favHtml += `<div class="recipe-card">
+                        <div class="recipe-header">
+                            <h3>⭐ ${f.title}</h3>
+                        </div>
+                        <div class="ingredients-box" style="white-space: pre-line;">${f.details}</div>
+                        <button class="btn" style="padding:6px; font-size:0.8rem;" onclick="useFavorite(${idx})">Planifier ce favori</button>
+                        <button class="btn btn-delete" onclick="deleteFavorite(${idx})">Supprimer des favoris</button>
+                    </div>`;
+                });
+                favListContainer.innerHTML = favHtml;
+            }
         }
     </script>
 </body>
