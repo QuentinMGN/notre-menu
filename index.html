@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notre Menu de la Semaine</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f4f4f9; color: #333; }
+        h1 { text-align: center; color: #2c3e50; }
+        .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background: #27ae60; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px; }
+        button:hover { background: #219653; }
+        .recipe-item { border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>🍽️ Notre Menu de la Semaine</h1>
+
+    <div class="card">
+        <h3>Ajouter ou modifier un repas</h3>
+        <label for="day">Jour :</label>
+        <input type="text" id="day" placeholder="Ex: Lundi - Pâtes carbo">
+        <label for="recipe">Détails de la recette :</label>
+        <textarea id="recipe" rows="3" placeholder="Ingrédients et étapes rapides..."></textarea>
+        <button onclick="saveMeal()">Ajouter au planning</button>
+    </div>
+
+    <div class="card">
+        <h3>Planning de la semaine</h3>
+        <div id="menuList">Aucun repas enregistré pour l'instant.</div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", loadMeals);
+
+        function saveMeal() {
+            const day = document.getElementById('day').value;
+            const recipe = document.getElementById('recipe').value;
+            if(!day || !recipe) return alert("Remplis tous les champs !");
+
+            let meals = JSON.parse(localStorage.getItem('shared_meals') || '[]');
+            meals.push({ day, recipe });
+            localStorage.setItem('shared_meals', JSON.stringify(meals));
+
+            document.getElementById('day').value = '';
+            document.getElementById('recipe').value = '';
+            loadMeals();
+        }
+
+        function loadMeals() {
+            const menuList = document.getElementById('menuList');
+            let meals = JSON.parse(localStorage.getItem('shared_meals') || '[]');
+            if(meals.length === 0) {
+                menuList.innerHTML = "Aucun repas enregistré pour l'instant.";
+                return;
+            }
+            menuList.innerHTML = meals.map((m, index) => `
+                <div class="recipe-item">
+                    <strong>${m.day}</strong>
+                    <p>${m.recipe.replace(/\n/g, '<br>')}</p>
+                    <button onclick="deleteMeal(${index})" style="background:#e74c3c; padding:5px; font-size:12px; width:auto;">Supprimer</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteMeal(index) {
+            let meals = JSON.parse(localStorage.getItem('shared_meals') || '[]');
+            meals.splice(index, 1);
+            localStorage.setItem('shared_meals', JSON.stringify(meals));
+            loadMeals();
+        }
+    </script>
+</body>
+</html>
